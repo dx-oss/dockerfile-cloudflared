@@ -1,8 +1,4 @@
-ARG ARCH
 FROM golang:alpine as gobuild
-
-ARG GOARCH
-ARG GOARM
 
 RUN apk update; \
     apk add git gcc build-base; \
@@ -10,11 +6,9 @@ RUN apk update; \
 
 WORKDIR /go/src/github.com/cloudflare/cloudflared/cmd/cloudflared
 
-RUN GOARCH=${GOARCH} GOARM=${GOARM} go build ./
+RUN GOOS=linux GOARCH=amd64 go build ./
 
-FROM multiarch/alpine:${ARCH}-edge
-
-LABEL maintainer="Jan Collijs"
+FROM alpine
 
 ENV DNS1 1.1.1.1
 ENV UPSTREAM1 https://${DNS1}/.well-known/dns-query
